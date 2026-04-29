@@ -1,0 +1,6 @@
+Config.swift
+.DS_Store
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.resolved
