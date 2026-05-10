@@ -16,6 +16,7 @@ final class MovieListViewModel {
     
     private let useCase: FetchPopularMoviesUseCaseProtocol
     private var currentPage = 1
+    private var hasMorePages = true
     
     init(useCase: FetchPopularMoviesUseCaseProtocol = FetchPopularMoviesUseCase(
         repository: MovieRepository()
@@ -24,12 +25,20 @@ final class MovieListViewModel {
     }
     
     func fetchMovies() async {
+        guard !isLoading, hasMorePages else { return }
+        
         isLoading = true
         errorMessage = nil
         
         do {
             let result = try await useCase.execute(page: currentPage)
-            movies = result
+            
+            if result.isEmpty {
+                hasMorePages = false
+            } else {
+                movies.append(contentsOf: result)
+                currentPage += 1
+            }
         } catch {
             errorMessage = "Erro ao carregar filmes."
         }

@@ -34,7 +34,7 @@ struct MovieListView: View {
     
     @ViewBuilder
     private var content: some View {
-        if viewModel.isLoading {
+        if viewModel.isLoading && viewModel.movies.isEmpty {
             ProgressView()
         } else if let error = viewModel.errorMessage {
             Text(error)
@@ -45,11 +45,29 @@ struct MovieListView: View {
     }
     
     private var movieList: some View {
-        List(viewModel.movies) { movie in
-            MovieRowView(movie: movie)
-                .onTapGesture {
-                    coordinator.push(.movieDetail(movie))
+        List {
+            ForEach(viewModel.movies) { movie in
+                MovieRowView(movie: movie)
+                    .onTapGesture {
+                        coordinator.push(.movieDetail(movie))
+                    }
+                    .onAppear {
+                        if movie == viewModel.movies.last {
+                            Task {
+                                await viewModel.fetchMovies()
+                            }
+                        }
+                    }
+            }
+            
+            if viewModel.isLoading {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
                 }
+                .listRowSeparator(.hidden)
+            }
         }
         .listStyle(.plain)
     }
