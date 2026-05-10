@@ -5,7 +5,7 @@
 //  Created by Lucas Pedroso on 29/04/26.
 //
 
-struct Movie: Identifiable, Equatable {
+struct Movie: Identifiable, Equatable, Hashable {
     let id: Int
     let title: String
     let overview: String

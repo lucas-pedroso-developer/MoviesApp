@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct MoviesAppApp: App {
+    
+    @State private var coordinator = AppCoordinator()
+    
     var body: some Scene {
         WindowGroup {
-            Text("Movies App")
+            MovieListView(coordinator: coordinator)
         }
     }
 }
